@@ -52,6 +52,10 @@ export default function RegisterPage({ navigation }) {
         <Text style={{ fontSize: 16, color: "#333" }}>{role}</Text>
       </View>
       <Button title="Register" onPress={handleRegister} />
+
+      <div style={styles.backButton} onClick={() => navigation.goBack()}>
+        Back to Login
+      </div>
     </View>
   );
 }

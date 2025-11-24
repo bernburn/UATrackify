@@ -58,4 +58,15 @@ export default StyleSheet.create({
     fontSize: 16,
     color: "#222",
   },
+  backButton: {
+    marginTop: 12,
+    textDecorationLine: "underline",
+    color: "#007bff",
+    fontFamily: "system-ui",
+    width: "fit-content",
+    textAlign: "center",
+    padding: 8,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
 });
