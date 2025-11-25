@@ -26,6 +26,22 @@ export default StyleSheet.create({
     borderWidth: 0,
     marginLeft: 0,
     marginBottom: 24,
+    width: 22,
+    height: 22,
+    borderWidth: 2,
+    borderColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+
+  checkIcon: {
+    fontSize: 20,       // ✔ big check mark
+    fontWeight: "bold",
+    color: "#000",
+    lineHeight: 22,     // ✔ ensures perfect vertical centering
+    textAlign: "center" // ✔ horizontal centering
+  },
+
   },
   roleField: {
     borderWidth: 1,
@@ -69,4 +85,25 @@ export default StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
   },
+
+  bg: {
+  flex: 1,
+  width: 40,
+  height: 40,
+  },
+
+  loginButton: {
+  backgroundColor: "#002365",  
+  paddingVertical: 12,
+  borderRadius: 8,
+  alignItems: "center",
+  marginTop: 20,
+  },
+
+  loginButtonText: {
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: "bold",
+  },
+
 });
