@@ -1,6 +1,10 @@
+import { text } from "stream/consumers";
+
 export const colors = {
-  primary: "#2f87e6ff",
-  secondary: "#6c757d",
-  success: "#28a745",
-  backgroundColor: "#3673afff",
-}
+  primary: "#284B63",
+  secondary: "#3c6e71",
+  background: "#ffffffff",
+  surface: "#ffffffff",
+  text: "#353535",
+  lightText: "#ffffffff",
+};

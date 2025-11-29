@@ -11,26 +11,27 @@ export default function LoginPage({ navigation }) {
 
   const handleLogin = async () => {
     try {
-            const response = await axios.post("http://127.0.0.1:8000/auth/token/login/", {
-              email: email,
-              password: password
-            })
-            setData(response.data)
-  
-              localStorage.setItem('authToken', response.data.auth_token);
-              localStorage.setItem("role", response.data.role);
-              localStorage.setItem("user_id", response.data.user_id);
-              localStorage.setItem("email", response.data.email);
-            
-            
-            
-            navigation.navigate("Dashboard");
-            
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-  
+      const response = await axios.post(
+        "http://127.0.0.1:8000/auth/token/login/",
+        {
+          email: email,
+          password: password,
+        }
+      );
+      console.log("Login successful:", response.data);
+
+      localStorage.setItem("authToken", response.data.auth_token);
+      localStorage.setItem("role", response.data.role);
+      localStorage.setItem("user_id", response.data.user_id);
+      localStorage.setItem("email", response.data.email);
+      localStorage.setItem("name", response.data.name);
+      localStorage.setItem("organization", response.data.organization);
+
+      navigation.navigate("Dashboard");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
