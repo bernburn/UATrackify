@@ -5,7 +5,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
-import ReviewUserInfoPage from './pages/dashboard/ReviewUserInfoPage';
+import ReviewUserInfoPage from './pages/auth/ReviewUserInfoPage';
+
 const Stack = createNativeStackNavigator();
 
 export default function Dashboard() {
