@@ -82,4 +82,46 @@ export default StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
   },
+  // Add these styles to your existing styles object in styles/styles.js
+dropdownButton: {
+    height: 50,
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    justifyContent: 'center',
+    marginBottom: 15,
+    backgroundColor: '#fff',
+},
+dropdownButtonText: {
+    fontSize: 16,
+    color: '#333',
+},
+modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+},
+dropdownContainer: {
+    width: '80%',
+    maxHeight: '60%', // Limits the height of the modal list
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 10,
+},
+dropdownListWrapper: {
+    flexGrow: 0, // Allows the FlatList to respect maxHeight
+    maxHeight: 300, // Explicit max height for the list to ensure scrollability
+    marginBottom: 10,
+},
+dropdownItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+},
+dropdownItemText: {
+    fontSize: 16,
+},
 });
