@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  StatusBar,
 } from "react-native";
 import NavBar from "../componentsFolder/NavBar";
 import { useEffect, useState } from "react";
@@ -31,30 +32,7 @@ export default function DashboardPage({ navigation }) {
   } else {
     text = "Student Dashboard";
   }
-<<<<<<< HEAD
 
-  return (
-    <View style={styles.container}>
-      <NavBar text={text} />
-      <SafeAreaProvider>
-        <SafeAreaView style={styles.scrollContainer} edges={["top"]}>
-          <ScrollView style={{}}>
-            <View style={{ margin: 24 }}>
-              <Text style={[styles.text, { color: colors.primary }]}>
-                Welcome, {name}
-              </Text>
-            </View>
-
-            {role === "admin" ? (
-              <AdminDashboardPage navigation={navigation} />
-            ) : (
-              <StudentDashboardPage navigation={navigation} />
-            )}
-          </ScrollView>
-        </SafeAreaView>
-      </SafeAreaProvider>
-=======
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,49 +58,50 @@ export default function DashboardPage({ navigation }) {
       {/* 🚨 FIX: Wrap NavBar in a View with high zIndex and position: 'relative' */}
       <View style={styles.navContainer}>
         {/* You need to pass navigation to NavBar for the menu items to work */}
-        <NavBar navigation={navigation} text={text} /> 
+        <NavBar navigation={navigation} text={text} />
       </View>
 
       {/* The welcome message View should not have a high zIndex */}
-      <View style={{ margin: 24 }}>
-        <Text style={[styles.text, { color: colors.primary }]}>
-          Welcome, {name}
-        </Text>
-      </View>
-      
-      {role === "admin" ? (
-        <AdminDashboardPage navigation={navigation} />
-      ) : (
-        <StudentDashboardPage navigation={navigation} />
-      )}
->>>>>>> f78c5fb6a8247b32bef3e488023158ff148bd1a8
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container} edges={["top"]}>
+          <ScrollView style={styles.scrollView}>
+            <View style={{ margin: 24 }}>
+              <Text style={[styles.text, { color: colors.primary }]}>
+                Welcome, {name}
+              </Text>
+            </View>
+
+            {role === "admin" ? (
+              <AdminDashboardPage navigation={navigation} />
+            ) : (
+              <StudentDashboardPage navigation={navigation} />
+            )}
+          </ScrollView>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-<<<<<<< HEAD
-    backgroundColor: colors.surface,
-  },
-  scrollContainer: {
-    height: "100vh",
-    paddingBottom: 100,
-=======
     // Changing '100vh' to '100%' for better cross-platform support
-    height: "100%", 
+    height: "100%",
     flex: 1, // Add flex: 1 for RN best practices
     backgroundColor: colors.surface,
   },
   // 🚨 NEW STYLE RULE FOR Z-INDEX FIX 🚨
   navContainer: {
     // This is the key: establishes a stacking context with high priority
-    position: 'relative', // CRITICAL for RN Web to activate zIndex properly
-    zIndex: 1000, 
->>>>>>> f78c5fb6a8247b32bef3e488023158ff148bd1a8
+    position: "relative", // CRITICAL for RN Web to activate zIndex properly
+    zIndex: 1000,
   },
   text: {
     fontSize: 24,
     fontWeight: "600",
+  },
+  scrollContainer: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
   },
 });
