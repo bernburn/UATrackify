@@ -1,285 +1,275 @@
 import React, { useState } from "react";
-import { View, Text, Button, TextInput, StyleSheet, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import axios from "axios";
 
-const OrganizationName_Choices = [
-    ['SSITE', 'SSITE'],
-    ['UASAO', 'UASAO'],
-    ['MCSA', 'MCSA'],
-    ['JPIA', 'JPIA'],
-    ['LTSP', 'LTSP'],
-    ['BHS-PHS', 'BHS-PHS'],
-    ['NSC', 'NSC'],
-    ['JPPhA', 'JPPhA'],
-    ['CRCYC', 'CRCYC'],
-    ['CDW', 'CDW'],
-    ['BATAS', 'BATAS'],
-    ['CREATE', 'CREATE'],
-    ['PICE', 'PICE'],
-    ['AAA', 'AAA'],
-    ['PIIE', 'PIIE'],
-    ['BACC', 'BACC'],
-    ['PSYCHSOC', 'PSYCHSOC'],
-    ['LEAD', 'LEAD'],
-    ['CHARMS', 'CHARMS'],
-    ['ICpEP.se', 'ICpEP.se'],
-    ['INA', 'INA'],
-    ['UACSC', 'UACSC'],
-];
-
 export default function AddForm({ navigation }) {
-    
-    const [formData, setFormData] = useState({
-        organization: OrganizationName_Choices.length > 0 ? OrganizationName_Choices[0][0] : "",
-        event_name: "",
-        contact_person: "",
-        event_date: "",
-        attach_document: null, 
-        status_osa:"NS",
-        osa_notes:"",
-        status_vpaa:"NS",
-        vpaa_notes:"",
-        status_finance:"NS",
-        finance_notes:"",
-        status_vpa:"NS",
-        vpa_notes:"",
-        remarks:""
-    });
+  const org = localStorage.getItem("organization");
+  const [formData, setFormData] = useState({
+    organization: org,
+    event_name: "",
+    contact_person: "",
+    event_date: "",
+    attach_document: null,
+    status_osa: "NS",
+    osa_notes: "",
+    status_vpaa: "NS",
+    vpaa_notes: "",
+    status_finance: "NS",
+    finance_notes: "",
+    status_vpa: "NS",
+    vpa_notes: "",
+    remarks: "",
+  });
 
-    const [fileName, setFileName] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-    const handleChange = (field, value) => {
-        setFormData({ ...formData, [field]: value })
-    };
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
 
-    const handleWebFileChange = (event) => {
-        setErrorMessage("");
-        
-        const files = event.target.files;
-        
-        if (files.length > 0) {
-            const file = files[0];
-            
-            setFormData({ ...formData, attach_document: file });
-            setFileName(file.name);
-        } else {
-            setFormData({ ...formData, attach_document: null });
-            setFileName("");
-        }
-    };
+  const handleWebFileChange = (event) => {
+    setErrorMessage("");
 
-    const handleSubmit = async () => {
-        setErrorMessage("");
+    const files = event.target.files;
 
-        if (!formData.attach_document) {
-            setErrorMessage("Please Fill");
-            return;
-        }
+    if (files.length > 0) {
+      const file = files[0];
 
-        const data = new FormData();
+      setFormData({ ...formData, attach_document: file });
+      setFileName(file.name);
+    } else {
+      setFormData({ ...formData, attach_document: null });
+      setFileName("");
+    }
+  };
 
-        for (const key in formData) {
-            if (key !== 'attach_document') {
-                data.append(key, formData[key] || "");
-            }
-        }
+  const handleSubmit = async () => {
+    setErrorMessage("");
 
-        data.append('attach_document', formData.attach_document, formData.attach_document.name);
+    if (!formData.attach_document) {
+      setErrorMessage("Please Fill");
+      return;
+    }
 
-        try {
-            const response = await axios.post(
-                "http://127.0.0.1:8000/api/Events/",
-                data,
-                {
-                    headers: {
+    const data = new FormData();
 
-                        'Content-Type': 'multipart/form-data', 
-                    },
-                }
-            );
-            
-            window.alert("Form and file submitted successfully!"); 
-            navigation.goBack();
+    for (const key in formData) {
+      if (key !== "attach_document") {
+        data.append(key, formData[key] || "");
+      }
+    }
 
-        } catch (err) {
-            console.error("Error submitting form:", err.response ? err.response.data : err.message);
-            setErrorMessage(`Submission Error. Status: ${err.response ? err.response.status : 'Network Error'}. Check console for details.`);
-        }
-    };
-
-    return (
-        <View style={styles.container}>
-            
-            {/* Organization Dropdown */}
-            <View style={styles.dropdownContainer}>
-                <Text style={styles.dropdownLabel}>Organization:</Text>
-                {Platform.OS === 'web' ? (
-                    <select
-                        value={formData.organization}
-                        onChange={(e) => handleChange("organization", e.target.value)}
-                        style={styles.webSelect}
-                    >
-                        {OrganizationName_Choices.map(([value, label]) => (
-                            <option key={value} value={value}>
-                                {label}
-                            </option>
-                        ))}
-                    </select>
-                ) : (
-                    // Placeholder for native dropdown (should use Picker or similar)
-                    <Text style={styles.input}>Selected: {formData.organization}</Text>
-                )}
-            </View>
-            
-            {/* Standard Text Inputs */}
-            <TextInput style={styles.input} placeholder="Event Name:" value={formData.event_name} onChangeText={(text) => handleChange("event_name", text)} />
-            <TextInput style={styles.input} placeholder="Contact Person:" value={formData.contact_person} onChangeText={(text) => handleChange("contact_person", text)} />
-            
-            {/* Event Date Picker/Input */}
-            <View style={styles.datePickerContainer}>
-                <Text style={styles.datePickerLabel}>Event Date (YYYY-MM-DD):</Text>
-                {Platform.OS === 'web' ? (
-                    <input
-                        type="date"
-                        value={formData.event_date}
-                        onChange={(e) => handleChange("event_date", e.target.value)}
-                        style={styles.webDateInput}
-                    />
-                ) : (
-                    <TextInput 
-                        style={styles.input} 
-                        placeholder="e.g., 2024-12-31 (Mobile: use native picker)" 
-                        value={formData.event_date} 
-                        onChangeText={(text) => handleChange("event_date", text)} 
-                    />
-                )}
-            </View>
-            
-            {/* File Picker Section */}
-            <View style={styles.filePickerSection}>
-                {Platform.OS === 'web' ? (
-                    <View style={styles.webFileInputContainer}>
-                        <Text style={{ marginBottom: 5, fontWeight: 'bold' }}>Attach Document:</Text>
-                        <input
-                            type="file"
-                            onChange={handleWebFileChange}
-                            style={{ display: 'block', padding: '10px 0' }}
-                        />
-                    </View>
-                ) : (
-                    // Placeholder for native file selection (needs react-native-document-picker)
-                    <View>
-                        <Button title="Select Document (Mobile)" onPress={() => alert('Use DocumentPicker for Mobile')} />
-                    </View>
-                )}
-                
-                {fileName ? <Text style={styles.fileNameText}>File selected: **{fileName}**</Text> : <Text style={styles.fileNameText}>No file selected.</Text>}
-            </View>
-            
-            {/* Remarks Input (since it was hidden inside the status display) */}
-            <TextInput style={styles.input} placeholder="Remarks (Optional):" value={formData.remarks} onChangeText={(text) => handleChange("remarks", text)} />
-
-
-            {/* ---------------------------------------------------- */}
-            {/* HIDDEN STATUS SECTION (Data is still sent to backend) */}
-            {/* ---------------------------------------------------- */}
-            <View style={{ display: 'none' }}> 
-                <Text>Status OSA: {formData.status_osa}</Text>
-                <Text>Status VPAA: {formData.status_vpaa}</Text>
-                <Text>Status Finance: {formData.status_finance}</Text>
-                <Text>Status VPA: {formData.status_vpa}</Text>
-            </View>
-
-            
-            {/* Error Message Display */}
-            {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-            
-            {/* Submit Button Section */}
-            <View style={styles.submitButtonContainer}>
-                <Button
-                    title="Submit Form"
-                    onPress={handleSubmit} 
-                />
-                <Button
-                    title="Go Back"
-                    onPress={() => navigation.goBack()}
-                />
-            </View>
-
-        </View>
+    data.append(
+      "attach_document",
+      formData.attach_document,
+      formData.attach_document.name
     );
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/Events/",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      window.alert("Form and file submitted successfully!");
+      navigation.goBack();
+    } catch (err) {
+      console.error(
+        "Error submitting form:",
+        err.response ? err.response.data : err.message
+      );
+      setErrorMessage(
+        `Submission Error. Status: ${
+          err.response ? err.response.status : "Network Error"
+        }. Check console for details.`
+      );
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={{}}>
+        <Text style={{}}>Submit A Form: </Text>
+      </View>
+
+      {/* Standard Text Inputs */}
+      <TextInput
+        style={styles.input}
+        placeholder="Event Name:"
+        value={formData.event_name}
+        onChangeText={(text) => handleChange("event_name", text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Contact Person:"
+        value={formData.contact_person}
+        onChangeText={(text) => handleChange("contact_person", text)}
+      />
+
+      {/* Event Date Picker/Input */}
+      <View style={styles.datePickerContainer}>
+        <Text style={styles.datePickerLabel}>Event Date (YYYY-MM-DD):</Text>
+        {Platform.OS === "web" ? (
+          <input
+            type="date"
+            value={formData.event_date}
+            onChange={(e) => handleChange("event_date", e.target.value)}
+            style={styles.webDateInput}
+          />
+        ) : (
+          <TextInput
+            style={styles.input}
+            placeholder="e.g., 2024-12-31 (Mobile: use native picker)"
+            value={formData.event_date}
+            onChangeText={(text) => handleChange("event_date", text)}
+          />
+        )}
+      </View>
+
+      {/* File Picker Section */}
+      <View style={styles.filePickerSection}>
+        {Platform.OS === "web" ? (
+          <View style={styles.webFileInputContainer}>
+            <Text style={{ marginBottom: 5, fontWeight: "bold" }}>
+              Attach Document:
+            </Text>
+            <input
+              type="file"
+              onChange={handleWebFileChange}
+              style={{ display: "block", padding: "10px 0" }}
+            />
+          </View>
+        ) : (
+          // Placeholder for native file selection (needs react-native-document-picker)
+          <View>
+            <Button
+              title="Select Document (Mobile)"
+              onPress={() => alert("Use DocumentPicker for Mobile")}
+            />
+          </View>
+        )}
+
+        {fileName ? (
+          <Text style={styles.fileNameText}>File selected: **{fileName}**</Text>
+        ) : (
+          <Text style={styles.fileNameText}>No file selected.</Text>
+        )}
+      </View>
+
+      {/* Remarks Input (since it was hidden inside the status display) */}
+      <TextInput
+        style={styles.input}
+        placeholder="Remarks (Optional):"
+        value={formData.remarks}
+        onChangeText={(text) => handleChange("remarks", text)}
+      />
+
+      {/* ---------------------------------------------------- */}
+      {/* HIDDEN STATUS SECTION (Data is still sent to backend) */}
+      {/* ---------------------------------------------------- */}
+      <View style={{ display: "none" }}>
+        <Text>Status OSA: {formData.status_osa}</Text>
+        <Text>Status VPAA: {formData.status_vpaa}</Text>
+        <Text>Status Finance: {formData.status_finance}</Text>
+        <Text>Status VPA: {formData.status_vpa}</Text>
+      </View>
+
+      {/* Error Message Display */}
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
+
+      {/* Submit Button Section */}
+      <View style={styles.submitButtonContainer}>
+        <Button title="Submit Form" onPress={handleSubmit} />
+        <Button title="Go Back" onPress={() => navigation.goBack()} />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 10,
-    },
-    dropdownContainer: {
-        marginBottom: 10,
-    },
-    dropdownLabel: {
-        marginBottom: 5,
-        fontWeight: 'bold',
-        fontSize: 14,
-    },
-    webSelect: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 10,
-        width: '100%',
-        backgroundColor: 'white',
-        appearance: 'none',
-        fontSize: 16,
-    },
-    datePickerContainer: {
-        marginBottom: 10,
-    },
-    datePickerLabel: {
-        marginBottom: 5,
-        fontWeight: 'bold',
-        fontSize: 14,
-    },
-    webDateInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 10,
-        width: '100%',
-        backgroundColor: 'white',
-        fontSize: 16,
-    },
-    filePickerSection: {
-        marginTop: 10,
-        marginBottom: 10,
-        padding: 5,
-        borderWidth: 1,
-        borderColor: '#eee',
-    },
-    webFileInputContainer: {
-        height: 50, 
-        justifyContent: 'center',
-    },
-    fileNameText: {
-        marginTop: 5,
-        fontSize: 12,
-        color: '#555',
-    },
-    submitButtonContainer: {
-        marginTop: 20,
-    },
-    errorText: {
-        color: 'red',
-        fontWeight: 'bold',
-        marginBottom: 10,
-        textAlign: 'center',
-    }
+  container: {
+    padding: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  dropdownContainer: {
+    marginBottom: 10,
+  },
+  dropdownLabel: {
+    marginBottom: 5,
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  webSelect: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    width: "100%",
+    backgroundColor: "white",
+    appearance: "none",
+    fontSize: 16,
+  },
+  datePickerContainer: {
+    marginBottom: 10,
+  },
+  datePickerLabel: {
+    marginBottom: 5,
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  webDateInput: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    width: "100%",
+    backgroundColor: "white",
+    fontSize: 16,
+  },
+  filePickerSection: {
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 5,
+    borderWidth: 1,
+    borderColor: "#eee",
+  },
+  webFileInputContainer: {
+    height: 50,
+    justifyContent: "center",
+  },
+  fileNameText: {
+    marginTop: 5,
+    fontSize: 12,
+    color: "#555",
+  },
+  submitButtonContainer: {
+    marginTop: 20,
+  },
+  errorText: {
+    color: "red",
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
 });
