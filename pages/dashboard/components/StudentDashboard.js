@@ -59,7 +59,7 @@ export default function DashboardPage({ navigation }) {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </Text>
-          <Pressable>
+          <Pressable onPress={() => navigation.navigate("AddForm")}>
             <View style={styles.button}>
               <Text
                 style={{ fontSize: 16, fontWeight: 500, color: colors.primary }}

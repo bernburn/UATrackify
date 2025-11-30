@@ -6,6 +6,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ReviewUserInfoPage from "./pages/auth/ReviewUserInfoPage";
+import AddForm from "./pages/dashboard/FormPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,11 @@ export default function Dashboard() {
         <Stack.Screen
           name="ReviewUserInfo"
           component={ReviewUserInfoPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddForm"
+          component={AddForm}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
