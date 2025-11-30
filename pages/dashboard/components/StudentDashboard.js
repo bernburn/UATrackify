@@ -13,9 +13,9 @@ import { colors } from "../../../styles/colors";
 
 // COMPONENTS
 
-import { Card } from "../components/Card";
+import Card from "./Card";
 
-export default function DashboardPage({ navigation }) {
+export default function StudentDashboardPage({ navigation }) {
   // sample user role logic
   const organization = localStorage.getItem("organization");
 
@@ -88,6 +88,7 @@ export default function DashboardPage({ navigation }) {
         </View>
 
         {filteredResponse.data.map((item) => {
+          console.log(item.id);
           let statusOverall =
             item.status_finance === "C" &&
             item.status_osa === "C" &&
@@ -98,11 +99,13 @@ export default function DashboardPage({ navigation }) {
           return (
             <Card
               key={item.id}
+              id={item.id}
               title={item.event_name}
               organization={item.organization}
               eventDate={item.event_date}
               statusOverall={statusOverall}
               contactPerson={item.contact_person}
+              attachedDocument={item.attach_document}
             />
           );
         })}

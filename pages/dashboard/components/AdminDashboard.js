@@ -12,22 +12,19 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { colors } from "../../../styles/colors";
 
-export const Card = ({ title, onPress }) => {
-  return (
-    <View style={styles.card}>
-      <Text style={{ fontSize: 18, marginBottom: 12 }}>{title}</Text>
-    </View>
-  );
-};
+import Card from "./Card";
+import { Picker, selectedValue } from "react-native-web";
 
-export default function DashboardPage({ navigation }) {
+export default function AdminDashboardPage({ navigation }) {
+  const [data, setData] = useState({ data: [] });
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/list_Events/"
         );
-        console.log(response.data);
+        setData({ data: response.data });
+        console.log(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -37,25 +34,36 @@ export default function DashboardPage({ navigation }) {
 
   return (
     <View>
-      <Pressable onPress={() => navigation.navigate("Register")}>
-        <View style={styles.container}>
-          <Text style={{ fontSize: 18, marginBottom: 12 }}>
-            Ongoing Form Approvals
-          </Text>
-        </View>
-      </Pressable>
-      <Pressable onPress={() => navigation.navigate("Register")}>
-        <View style={styles.container}>
-          <Text style={{ fontSize: 18, marginBottom: 12 }}>
-            Pending Approvals
-          </Text>
-        </View>
-      </Pressable>
-      <Pressable onPress={() => navigation.navigate("Register")}>
-        <View style={styles.container}>
-          <Text style={{ fontSize: 18, marginBottom: 12 }}>Completed</Text>
-        </View>
-      </Pressable>
+      <Picker
+        selectedValue={selectedValue}
+        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+      >
+        <Picker.Item label="Option 1" value="value1" />
+        <Picker.Item label="Option 2" value="value2" />
+        <Picker.Item label="Option 3" value="value3" />
+      </Picker>
+      {data.data.map((item) => {
+        console.log(item.id);
+        let statusOverall =
+          item.status_finance === "C" &&
+          item.status_osa === "C" &&
+          item.status_vpa === "C" &&
+          item.status_vpaa === "C"
+            ? "Completed"
+            : "Pending";
+        return (
+          <Card
+            key={item.id}
+            id={item.id}
+            title={item.event_name}
+            organization={item.organization}
+            eventDate={item.event_date}
+            statusOverall={statusOverall}
+            contactPerson={item.contact_person}
+            attachedDocument={item.attach_document}
+          />
+        );
+      })}
     </View>
   );
 }

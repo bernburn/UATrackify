@@ -102,7 +102,7 @@ export default function AddForm({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={{}}>
-        <Text style={{}}>Submit A Form: </Text>
+        <Text style={{}}>Submit A Form:</Text>
       </View>
 
       {/* Standard Text Inputs */}
