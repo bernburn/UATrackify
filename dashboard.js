@@ -7,6 +7,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ReviewUserInfoPage from "./pages/auth/ReviewUserInfoPage";
 import AddForm from "./pages/dashboard/FormPage";
+import EditFormPage from "./pages/dashboard/EditFormPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,11 @@ export default function Dashboard() {
         <Stack.Screen
           name="AddForm"
           component={AddForm}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EditForm"
+          component={EditFormPage}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

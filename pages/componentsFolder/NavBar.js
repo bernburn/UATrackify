@@ -38,15 +38,8 @@ export default function NavBar({ navigation }) {
   };
 
   const handleEditUser = () => {
-    setIsMenuOpen(false); // Close menu
-    console.log("Navigating to Edit User Info...");
-    
-    // ✅ UNCOMMENTED NAVIGATION CALL
-    if (navigation) {
-      navigation.navigate("EditUser"); 
-    } else {
-      console.error("Navigation prop is missing on NavBar!");
-    }
+    navigation.navigate("EditForm");
+
   };
 
   // 🚀 MODIFIED: Logout function now clears AsyncStorage and resets navigation
@@ -61,7 +54,7 @@ export default function NavBar({ navigation }) {
       await AsyncStorage.removeItem('email');
       await AsyncStorage.removeItem('name');
       await AsyncStorage.removeItem('organization');
-      await AsyncStorage.removeItem('isRemembered');
+      
 
       console.log('Logout successful: Token and user data cleared.');
 
