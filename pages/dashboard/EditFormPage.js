@@ -14,6 +14,8 @@ import { colors } from "../../styles/colors";
 import { Picker } from "@react-native-picker/picker";
 
 export default function EditFormPage({ navigation, route }) {
+  // State for delete confirmation modal
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const routeData = route.params;
 
   const role = localStorage.getItem("role");
@@ -26,11 +28,20 @@ export default function EditFormPage({ navigation, route }) {
   const [modalMessage, setModalMessage] = useState("");
 
   const [editData, setEditData] = useState({
+    organization: "",
     event_name: "",
     contact_person: "",
     event_date: "",
     attach_document: null,
-    organization: "",
+    status_osa: "NS",
+    osa_note: "",
+    status_vpaa: "NS",
+    vpaa_note: "",
+    status_finance: "NS",
+    finance_note: "",
+    status_vpa: "NS",
+    vpa_note: "",
+    remarks: "",
   });
 
   // Snapshot of original data for change detection
@@ -50,11 +61,20 @@ export default function EditFormPage({ navigation, route }) {
         const data = response.data;
 
         const filledData = {
+          organization: data.organization || "",
           event_name: data.event_name || "",
           contact_person: data.contact_person || "",
           event_date: data.event_date || "",
           attach_document: null,
-          organization: data.organization || "",
+          status_osa: data.status_osa || "NS",
+          osa_note: data.osa_note || "",
+          status_vpaa: data.status_vpaa || "NS",
+          vpaa_note: data.vpaa_note || "",
+          status_finance: data.status_finance || "NS",
+          finance_note: data.finance_note || "",
+          status_vpa: data.status_vpa || "NS",
+          vpa_note: data.vpa_note || "",
+          remarks: data.remarks || "",
         };
 
         setEditData(filledData);
@@ -64,13 +84,14 @@ export default function EditFormPage({ navigation, route }) {
           const parts = data.attach_document.split("/");
           setFileName(parts[parts.length - 1]);
         }
-
-        if (data.pickerValue) setSelectedValue(data.pickerValue);
       } catch (error) {
         console.error(
           "Error fetching event data:",
           error.response?.data || error
         );
+        setModalMessage("Failed to load event data.");
+        setModalVisible(true);
+        setTimeout(() => setModalVisible(false), 2000);
       }
     };
 
@@ -90,17 +111,30 @@ export default function EditFormPage({ navigation, route }) {
   };
 
   // Submit edited data (partial update) with proper change detection
+  // Delete function for admin
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/Events/${routeData.id}/`);
+      setShowDeleteConfirm(false);
+      setModalMessage("Event deleted successfully!");
+      setModalVisible(true);
+      setTimeout(() => {
+        setModalVisible(false);
+        navigation.goBack();
+      }, 2000);
+    } catch (error) {
+      setShowDeleteConfirm(false);
+      setModalMessage("Delete failed.");
+      setModalVisible(true);
+      setTimeout(() => setModalVisible(false), 2000);
+    }
+  };
   const putData = async () => {
-    const hasChanges =
-      (editData.event_name?.trim() || "") !==
-        (originalData.event_name?.trim() || "") ||
-      (editData.contact_person?.trim() || "") !==
-        (originalData.contact_person?.trim() || "") ||
-      (editData.event_date?.trim() || "") !==
-        (originalData.event_date?.trim() || "") ||
-      (editData.organization?.trim() || "") !==
-        (originalData.organization?.trim() || "") ||
-      editData.attach_document !== null; // file change
+    const hasChanges = Object.keys(editData).some(
+      (key) =>
+        (editData[key]?.trim?.() ?? editData[key]) !==
+        (originalData[key]?.trim?.() ?? originalData[key])
+    );
 
     if (!hasChanges) {
       setModalMessage("No changes detected.");
@@ -127,11 +161,41 @@ export default function EditFormPage({ navigation, route }) {
       setOriginalData({ ...editData }); // update snapshot after save
     } catch (error) {
       console.error("Error saving data:", error.response?.data || error);
+      setModalMessage("Update failed.");
+      setModalVisible(true);
+      setTimeout(() => setModalVisible(false), 2000);
     }
   };
 
   return (
     <View style={styles.container}>
+      {/* Delete Confirmation Modal (only for admin) */}
+      {role === "admin" && (
+        <Modal
+          visible={showDeleteConfirm}
+          transparent={true}
+          animationType="fade"
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to delete this form?
+              </Text>
+              <View style={{ flexDirection: "row", gap: 16, marginTop: 16 }}>
+                <Pressable style={styles.modalButton} onPress={handleDelete}>
+                  <Text style={styles.modalButtonText}>Yes, Delete</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.modalButton}
+                  onPress={() => setShowDeleteConfirm(false)}
+                >
+                  <Text style={styles.modalButtonText}>Cancel</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
       {/* Modal */}
       <Modal visible={modalVisible} transparent={true} animationType="fade">
         <View style={styles.modalOverlay}>
@@ -202,21 +266,160 @@ export default function EditFormPage({ navigation, route }) {
         </Text>
       </View>
 
-      {/* Picker (OSA Admin Only) */}
-      {role === "admin" && office === "OSA" ? (
-        <Picker
-          selectedValue={selectedValue}
-          onValueChange={(value) => setSelectedValue(value)}
-        >
-          <Picker.Item label="Option 1" value="value1" />
-          <Picker.Item label="Option 2" value="value2" />
-          <Picker.Item label="Option 3" value="value3" />
-        </Picker>
-      ) : null}
-
+      {/* Conditional fields for admin and office */}
+      {role === "admin" && office === "OSA" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status OSA:</Text>
+          {Platform.OS === "web" ? (
+            <select
+              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              value={editData.status_osa}
+              onChange={(e) => handleChange("status_osa", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+          ) : (
+            <Picker
+              selectedValue={editData.status_osa}
+              onValueChange={(value) => handleChange("status_osa", value)}
+            >
+              <Picker.Item label="Not Started" value="NS" />
+              <Picker.Item label="In Progress" value="IP" />
+              <Picker.Item label="Completed" value="C" />
+            </Picker>
+          )}
+          <TextInput
+            style={styles.input}
+            placeholder="OSA Note"
+            value={editData.osa_note}
+            onChangeText={(text) => handleChange("osa_note", text)}
+          />
+        </>
+      )}
+      {role === "admin" && office === "VPAA" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+            Status VPAA:
+          </Text>
+          {Platform.OS === "web" ? (
+            <select
+              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              value={editData.status_vpaa}
+              onChange={(e) => handleChange("status_vpaa", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+          ) : (
+            <Picker
+              selectedValue={editData.status_vpaa}
+              onValueChange={(value) => handleChange("status_vpaa", value)}
+            >
+              <Picker.Item label="Not Started" value="NS" />
+              <Picker.Item label="In Progress" value="IP" />
+              <Picker.Item label="Completed" value="C" />
+            </Picker>
+          )}
+          <TextInput
+            style={styles.input}
+            placeholder="VPAA Note"
+            value={editData.vpaa_note}
+            onChangeText={(text) => handleChange("vpaa_note", text)}
+          />
+        </>
+      )}
+      {role === "admin" && office === "FINANCE" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+            Status FINANCE:
+          </Text>
+          {Platform.OS === "web" ? (
+            <select
+              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              value={editData.status_finance}
+              onChange={(e) => handleChange("status_finance", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+          ) : (
+            <Picker
+              selectedValue={editData.status_finance}
+              onValueChange={(value) => handleChange("status_finance", value)}
+            >
+              <Picker.Item label="Not Started" value="NS" />
+              <Picker.Item label="In Progress" value="IP" />
+              <Picker.Item label="Completed" value="C" />
+            </Picker>
+          )}
+          <TextInput
+            style={styles.input}
+            placeholder="Finance Note"
+            value={editData.finance_note}
+            onChangeText={(text) => handleChange("finance_note", text)}
+          />
+        </>
+      )}
+      {role === "admin" && office === "VPA" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status VPA:</Text>
+          {Platform.OS === "web" ? (
+            <select
+              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              value={editData.status_vpa}
+              onChange={(e) => handleChange("status_vpa", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+          ) : (
+            <Picker
+              selectedValue={editData.status_vpa}
+              onValueChange={(value) => handleChange("status_vpa", value)}
+            >
+              <Picker.Item label="Not Started" value="NS" />
+              <Picker.Item label="In Progress" value="IP" />
+              <Picker.Item label="Completed" value="C" />
+            </Picker>
+          )}
+          <TextInput
+            style={styles.input}
+            placeholder="VPA Note"
+            value={editData.vpa_note}
+            onChangeText={(text) => handleChange("vpa_note", text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Remarks (Optional)"
+            value={editData.remarks}
+            onChangeText={(text) => handleChange("remarks", text)}
+          />
+        </>
+      )}
+      {/* For non-admins or other offices, show Remarks only */}
+      {!(role === "admin" && office === "VPA") && (
+        <TextInput
+          style={styles.input}
+          placeholder="Remarks (Optional)"
+          value={editData.remarks}
+          onChangeText={(text) => handleChange("remarks", text)}
+        />
+      )}
       {/* Go Back Button */}
-      <View style={{ marginVertical: 10 }}>
+      <View style={{ marginVertical: 10, flexDirection: "row", gap: 10 }}>
         <Button title="Go Back" onPress={() => navigation.goBack()} />
+        {role === "admin" && (
+          <Button
+            title="Delete"
+            color="#E53935"
+            onPress={() => setShowDeleteConfirm(true)}
+          />
+        )}
       </View>
 
       {/* Save Button */}

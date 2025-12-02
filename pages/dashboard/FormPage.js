@@ -11,6 +11,32 @@ import axios from "axios";
 
 export default function AddForm({ navigation }) {
   const org = localStorage.getItem("organization");
+  const ORGANIZATION_CHOICES = [
+    "UACSC",
+    "INA",
+    "ICpEP.se",
+    "CHARMS",
+    "LEAD",
+    "PSYCHSOC",
+    "BACC",
+    "PIIE",
+    "AAA",
+    "PICE",
+    "CREATE",
+    "BATAS",
+    "CDW",
+    "CRCYC",
+    "JPPhA",
+    "NSC",
+    "BHS-PHS",
+    "LTSP",
+    "JPIA",
+    "MCSA",
+    "UASAO",
+    "SSITE",
+  ];
+  const role = localStorage.getItem("role");
+  const office = localStorage.getItem("office");
   const [formData, setFormData] = useState({
     organization: org,
     event_name: "",
@@ -18,13 +44,13 @@ export default function AddForm({ navigation }) {
     event_date: "",
     attach_document: null,
     status_osa: "NS",
-    osa_notes: "",
+    osa_note: "",
     status_vpaa: "NS",
-    vpaa_notes: "",
+    vpaa_note: "",
     status_finance: "NS",
-    finance_notes: "",
+    finance_note: "",
     status_vpa: "NS",
-    vpa_notes: "",
+    vpa_note: "",
     remarks: "",
   });
 
@@ -105,6 +131,34 @@ export default function AddForm({ navigation }) {
         <Text style={{}}>Submit A Form:</Text>
       </View>
 
+      {/* Organization selection for admin */}
+      {role === "admin" ? (
+        <>
+          <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+            Select Organization:
+          </Text>
+          <select
+            style={styles.webSelect}
+            value={formData.organization}
+            onChange={(e) => handleChange("organization", e.target.value)}
+          >
+            <option value="">Select Organization</option>
+            {ORGANIZATION_CHOICES.map((orgName) => (
+              <option key={orgName} value={orgName}>
+                {orgName}
+              </option>
+            ))}
+          </select>
+        </>
+      ) : (
+        <TextInput
+          style={styles.input}
+          placeholder="Organization:"
+          value={formData.organization}
+          editable={false}
+        />
+      )}
+
       {/* Standard Text Inputs */}
       <TextInput
         style={styles.input}
@@ -169,23 +223,106 @@ export default function AddForm({ navigation }) {
         )}
       </View>
 
-      {/* Remarks Input (since it was hidden inside the status display) */}
-      <TextInput
-        style={styles.input}
-        placeholder="Remarks (Optional):"
-        value={formData.remarks}
-        onChangeText={(text) => handleChange("remarks", text)}
-      />
-
-      {/* ---------------------------------------------------- */}
-      {/* HIDDEN STATUS SECTION (Data is still sent to backend) */}
-      {/* ---------------------------------------------------- */}
-      <View style={{ display: "none" }}>
-        <Text>Status OSA: {formData.status_osa}</Text>
-        <Text>Status VPAA: {formData.status_vpaa}</Text>
-        <Text>Status Finance: {formData.status_finance}</Text>
-        <Text>Status VPA: {formData.status_vpa}</Text>
-      </View>
+      {/* Conditional fields for admin and office */}
+      {role === "admin" && office === "OSA" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status OSA:</Text>
+          <select
+            style={styles.webSelect}
+            value={formData.status_osa}
+            onChange={(e) => handleChange("status_osa", e.target.value)}
+          >
+            <option value="NS">Not Started</option>
+            <option value="IP">In Progress</option>
+            <option value="C">Completed</option>
+          </select>
+          <TextInput
+            style={styles.input}
+            placeholder="OSA Note"
+            value={formData.osa_note}
+            onChangeText={(text) => handleChange("osa_note", text)}
+          />
+        </>
+      )}
+      {role === "admin" && office === "VPAA" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+            Status VPAA:
+          </Text>
+          <select
+            style={styles.webSelect}
+            value={formData.status_vpaa}
+            onChange={(e) => handleChange("status_vpaa", e.target.value)}
+          >
+            <option value="NS">Not Started</option>
+            <option value="IP">In Progress</option>
+            <option value="C">Completed</option>
+          </select>
+          <TextInput
+            style={styles.input}
+            placeholder="VPAA Note"
+            value={formData.vpaa_note}
+            onChangeText={(text) => handleChange("vpaa_note", text)}
+          />
+        </>
+      )}
+      {role === "admin" && office === "FINANCE" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+            Status FINANCE:
+          </Text>
+          <select
+            style={styles.webSelect}
+            value={formData.status_finance}
+            onChange={(e) => handleChange("status_finance", e.target.value)}
+          >
+            <option value="NS">Not Started</option>
+            <option value="IP">In Progress</option>
+            <option value="C">Completed</option>
+          </select>
+          <TextInput
+            style={styles.input}
+            placeholder="Finance Note"
+            value={formData.finance_note}
+            onChangeText={(text) => handleChange("finance_note", text)}
+          />
+        </>
+      )}
+      {role === "admin" && office === "VPA" && (
+        <>
+          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status VPA:</Text>
+          <select
+            style={styles.webSelect}
+            value={formData.status_vpa}
+            onChange={(e) => handleChange("status_vpa", e.target.value)}
+          >
+            <option value="NS">Not Started</option>
+            <option value="IP">In Progress</option>
+            <option value="C">Completed</option>
+          </select>
+          <TextInput
+            style={styles.input}
+            placeholder="VPA Note"
+            value={formData.vpa_note}
+            onChangeText={(text) => handleChange("vpa_note", text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Remarks (Optional)"
+            value={formData.remarks}
+            onChangeText={(text) => handleChange("remarks", text)}
+          />
+        </>
+      )}
+      {/* For non-admins or other offices, show Remarks only */}
+      {!(role === "admin" && office === "VPA") && (
+        <TextInput
+          style={styles.input}
+          placeholder="Remarks (Optional)"
+          value={formData.remarks}
+          onChangeText={(text) => handleChange("remarks", text)}
+        />
+      )}
 
       {/* Error Message Display */}
       {errorMessage ? (

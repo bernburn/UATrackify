@@ -1,6 +1,9 @@
 import { View, Text, StyleSheet, Pressable, Button } from "react-native";
+import { Linking } from "react-native";
+import { Platform } from "react-native";
 
 import { useState } from "react";
+import axios from "axios";
 
 import { colors } from "../../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -13,8 +16,35 @@ export default function Card({
   statusOverall,
   contactPerson,
   attachedDocument,
+  dateAdded,
   onPress,
 }) {
+  let documentName = attachedDocument ? attachedDocument.split("/").pop() : "";
+  console.log(documentName);
+
+  // If you want to show the name without extension, uncomment below:
+  let documentNameOnly = documentName.split(".").shift();
+
+  const handleDownload = async (documentName) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/download/${documentName}/`,
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", documentName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const navigation = useNavigation();
   const [isPressed, setIsPressed] = useState(false);
   return (
@@ -35,7 +65,33 @@ export default function Card({
               Contact Person: {contactPerson}
             </Text>
             <Text style={styles.cardBodyText}>Event Date: {eventDate}</Text>
-            <Text>Attached Document: {attachedDocument}</Text>
+            <Text>
+              Attached Document:{" "}
+              {attachedDocument ? (
+                Platform.OS === "web" ? (
+                  <span
+                    onClick={() => handleDownload(documentName)}
+                    style={{
+                      color: "blue",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {documentNameOnly}
+                  </span>
+                ) : (
+                  <Pressable onPress={() => Linking.openURL(attachedDocument)}>
+                    <Text
+                      style={{ color: "blue", textDecorationLine: "underline" }}
+                    >
+                      {documentNameOnly}
+                    </Text>
+                  </Pressable>
+                )
+              ) : (
+                ""
+              )}
+            </Text>
             <Text style={styles.cardBodyText}>
               Overall Status: {statusOverall}
             </Text>
@@ -64,6 +120,7 @@ export default function Card({
         <View style={styles.cardFooter}>
           <Text style={styles.cardFooterText}>Entry ID: {id}</Text>
           <Text style={styles.cardFooterText}>Click for more details</Text>
+          <Text style={styles.cardFooterText}>Date Added: {dateAdded}</Text>
         </View>
       </View>
     </Pressable>
