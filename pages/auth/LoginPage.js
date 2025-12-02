@@ -39,7 +39,7 @@ export default function LoginPage({ navigation }) {
 
   const handleLogin = async () => {
     setErrorMessage(""); // Clear previous error message on new login attempt
-
+    console.log(password, email);
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/auth/token/login/",
