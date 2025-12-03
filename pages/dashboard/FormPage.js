@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 export default function AddForm({ navigation }) {
   const [org, setOrg] = useState("");
@@ -51,7 +52,7 @@ export default function AddForm({ navigation }) {
   ];
 
   const [formData, setFormData] = useState({
-    organization: org,
+    organization: "",
     event_name: "",
     contact_person: "",
     event_date: "",
@@ -92,7 +93,10 @@ export default function AddForm({ navigation }) {
 
   const handleSubmit = async () => {
     setErrorMessage("");
-
+    if (role === "student"){
+      formData.organization = org;
+    }
+  
     if (!formData.attach_document) {
       setErrorMessage("Please Fill");
       return;
@@ -167,7 +171,7 @@ export default function AddForm({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Organization:"
-          value={formData.organization}
+          value={org}
           editable={false}
         />
       )}
