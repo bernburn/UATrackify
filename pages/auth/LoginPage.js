@@ -10,6 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "../../styles/styles"; // Ensure this includes a style for the error message
 import axios from "axios";
+import logoImg from "../../assets/logo.png"; 
 
 export default function LoginPage({ navigation }) {
   const [email, setEmail] = useState("");
@@ -92,9 +93,10 @@ export default function LoginPage({ navigation }) {
 
   return (
     <View style={styles.container}>
+    <View style={styles.loginCard}> 
       <Text style={styles.title}>Login</Text>
       <TextInput
-        style={styles.input}
+        style={styles.inputlog}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -102,7 +104,7 @@ export default function LoginPage({ navigation }) {
         keyboardType="email-address"
       />
       <TextInput
-        style={styles.input}
+        style={styles.inputlog}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
@@ -113,25 +115,34 @@ export default function LoginPage({ navigation }) {
         onPress={() => setRememberMe((prev) => !prev)}
         activeOpacity={0.7}
       >
-        <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]} />
-        <Text style={styles.checkboxLabel}>Remember Me</Text>
+<View style={styles.checkboxRow}>
+  <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+    {rememberMe && <View style={styles.checkmark} />}
+  </View>
+
+  <Text style={styles.checkboxLabel}>Remember Me</Text>
+</View>
+
       </TouchableOpacity>
-
+<View style={styles.loginButtonWrapper}>
       <Button title="Login" onPress={handleLogin} />
-
+</View>
       {/* 2. Display the error message if it exists */}
       {errorMessage ? (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       ) : null}
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Register")}
-        style={{ marginTop: 16 }}
-      >
-        <Text style={{ color: "#007bff" }}>
-          Don't have an account? Register
-        </Text>
-      </TouchableOpacity>
+
+     <TouchableOpacity
+  onPress={() => navigation.navigate("Register")}
+  style={{ marginTop: 16 }}
+>
+  <Text style={styles.registerLink}>
+    Don't have an account? Register
+  </Text>
+</TouchableOpacity>
+
+      </View>
     </View>
   );
 }

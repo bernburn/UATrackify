@@ -172,7 +172,8 @@ export default function ReviewUserInfoPage({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Review Your Information</Text>
+            <View style={styles.reviewCard}>
+            <Text style={styles.reviewTitle}>Review Your Information</Text>
 
             <Text style={{ color: authMissing ? 'red' : (isLoading ? 'blue' : 'black'), marginBottom: 16 }}>
                 {message}
@@ -189,21 +190,21 @@ export default function ReviewUserInfoPage({ navigation, route }) {
             <View pointerEvents={authMissing ? 'none' : 'auto'} style={{ opacity: authMissing ? 0.5 : 1 }}>
 
                 <TextInput
-                    style={styles.input}
+                    style={styles.reviewInput}
                     placeholder="First Name"
                     value={firstName}
                     onChangeText={setFirstName}
                     editable={!authMissing}
                 />
                 <TextInput
-                    style={styles.input}
+                    style={styles.reviewInput}
                     placeholder="Last Name"
                     value={lastName}
                     onChangeText={setLastName}
                     editable={!authMissing}
                 />
                 <TextInput
-                    style={[styles.input, { backgroundColor: '#fff' }]} 
+                    style={[styles.reviewInput, { backgroundColor: '#fff' }]} 
                     placeholder="Email"
                     value={email}
                     onChangeText={setEmail}
@@ -228,11 +229,13 @@ export default function ReviewUserInfoPage({ navigation, route }) {
                     <Text style={{ fontSize: 16, color: "#333", fontWeight: 'bold' }}>Role: {role}</Text>
                 </View>
 
+                <View style={styles.reviewButtonWrapper}>
                 <Button
                     title={isLoading ? "Processing..." : "Confirm & Create Account"}
                     onPress={handleUpdateAndProceed}
                     disabled={isLoading || !firstName || !lastName || !email || !password || !organization || authMissing}
                 />
+                </View>
             </View>
 
             {/* 🎯 MODAL FOR SCROLLABLE DROPDOWN (Copied from RegisterPage) */}
@@ -258,6 +261,7 @@ export default function ReviewUserInfoPage({ navigation, route }) {
                     </View>
                 </TouchableOpacity>
             </Modal>
+            </View>
         </View>
     );
 }

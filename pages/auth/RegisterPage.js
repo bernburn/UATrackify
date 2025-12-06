@@ -83,6 +83,7 @@ export default function RegisterPage({ navigation }) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.registerCard}>
             <Text style={styles.title}>Register</Text>
             
             {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
@@ -104,14 +105,18 @@ export default function RegisterPage({ navigation }) {
             {/* 🎯 DROPDOWN FIELD END */}
 
             <View style={styles.roleField}>
-                <Text style={{ fontSize: 16, color: "#333", fontWeight: 'bold' }}>Role: {role}</Text>
+                <Text style={{ fontSize: 16, color: "#7b7979ff", fontWeight: "bold", }}>Role: {role}</Text>
             </View>
             
-            <Button title="Review & Confirm" onPress={handleRegister} /> 
+            <View style={styles.reviewButtonWrapper}>
+    <Button title="Review & Confirm" onPress={handleRegister} />
+</View>
+ 
 
-            <View style={styles.backButton} onClick={() => navigation.goBack()}>
-                <Text style={{ color: "#007bff" }}>Back to Login</Text>
-            </View>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+    <Text style={styles.registerLink}>Back to Login</Text>
+</TouchableOpacity>
+
 
             {/* 🎯 MODAL FOR SCROLLABLE DROPDOWN */}
             <Modal
@@ -137,6 +142,7 @@ export default function RegisterPage({ navigation }) {
                     </View>
                 </TouchableOpacity>
             </Modal>
+            </View>
         </View>
     );
 }
