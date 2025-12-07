@@ -48,16 +48,26 @@ export default function DashboardPage({ navigation }) {
       </View>
 
       <SafeAreaProvider>
-        <SafeAreaView style={styles.safe} edges={["top"]}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+        <SafeAreaView
+          style={styles.safe}
+          contentContainerStyle={{
+            minHeight: Platform.OS === "web" ? "100vh" : "100%",
+          }}
+          edges={["top"]}
+        >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={styles.scroll}
+            contentContainerStyle={{ height: "100%" }}
+          >
             {/* Glassy Blue Header */}
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Welcome,</Text>
               <Text style={styles.headerName}>{name}</Text>
-
               <View style={styles.headerCircle1} />
               <View style={styles.headerCircle2} />
-              <View style={styles.headerOverlay} /> {/* Added a subtle overlay for the 'frost' effect */}
+              <View style={styles.headerOverlay} />{" "}
+              {/* Added a subtle overlay for the 'frost' effect */}
             </View>
 
             {/* Glassy Quick Card */}
@@ -86,8 +96,14 @@ export default function DashboardPage({ navigation }) {
             ) : (
               <StudentDashboardPage navigation={navigation} />
             )}
+            <View style={styles.footers}>
+              <Text style={styles.footerText}>
+                © {new Date().getFullYear()} UA Trackify. All rights reserved.
+              </Text>
+            </View>
           </ScrollView>
         </SafeAreaView>
+        {/* Footer at the bottom of content */}
       </SafeAreaProvider>
     </View>
   );
@@ -109,21 +125,21 @@ const styles = StyleSheet.create({
 
   safe: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 
   /* HEADER (Blue Glass Effect) */
   header: {
-    height: 180, 
+    height: 180,
     width: "100%",
     paddingHorizontal: 24,
-    paddingTop: 40, 
+    paddingTop: 40,
     backgroundColor: THEME_COLORS.headerBackground, // Semi-transparent Blue
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     overflow: "hidden",
     // Fallback for Web/RN-web: added this for visual cue
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(15px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(15px)" }),
     shadowColor: THEME_COLORS.darkBlue,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
@@ -134,7 +150,7 @@ const styles = StyleSheet.create({
   // Subtle frost effect inside the header
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     zIndex: 0,
   },
 
@@ -146,7 +162,7 @@ const styles = StyleSheet.create({
   },
 
   headerName: {
-    fontSize: 34, 
+    fontSize: 34,
     fontWeight: "800",
     color: THEME_COLORS.white,
     marginTop: 8,
@@ -189,7 +205,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 12,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(10px)" }),
     zIndex: 5, // Keep card above content below
   },
 
@@ -225,5 +241,25 @@ const styles = StyleSheet.create({
     color: THEME_COLORS.white,
     fontSize: 17,
     fontWeight: "700",
+  },
+  scroll: {
+    flexGrow: 1,
+    // On web, minHeight: '100vh' ensures full viewport height
+  },
+  footers: {
+    width: "100%",
+    paddingVertical: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: THEME_COLORS.glassSurface,
+    borderTopWidth: 1,
+    borderColor: THEME_COLORS.glassBorder,
+    marginTop: "auto",
+  },
+  footerText: {
+    color: THEME_COLORS.darkBlue,
+    fontSize: 14,
+    opacity: 0.7,
+    fontWeight: "500",
   },
 });

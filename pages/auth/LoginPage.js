@@ -6,11 +6,13 @@ import {
   Button,
   TouchableOpacity,
   Alert,
+  Image,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "../../styles/styles"; // Ensure this includes a style for the error message
 import axios from "axios";
-import logoImg from "../../assets/logo.png"; 
 
 export default function LoginPage({ navigation }) {
   const [email, setEmail] = useState("");
@@ -18,6 +20,8 @@ export default function LoginPage({ navigation }) {
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // 1. State for error message
   const [data, setData] = useState([]);
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const isDesktop = Platform.OS === "web" && windowWidth >= 1024;
 
   // Check for persistent token and flag on app load/refresh
   useEffect(() => {
@@ -91,57 +95,85 @@ export default function LoginPage({ navigation }) {
     }
   };
 
+  const containerStyle = [
+    styles.container,
+    isDesktop
+      ? {
+          flexDirection: "row",
+        }
+      : {},
+  ];
+
+  const loginCard = [
+    styles.loginCard,
+    isDesktop
+      ? {
+          borderRadius: 10,
+          shadowOpacity: 0.4,
+          shadowRadius: 4,
+          shadowColor: "#001e66",
+        }
+      : {},
+  ];
+
+  const logoStyle = [
+    styles.logo,
+    isDesktop
+      ? { width: 350, height: 225, marginBottom: 200, marginRight: 50 }
+      : { width: 150, height: 90 },
+  ];
+
   return (
-    <View style={styles.container}>
-    <View style={styles.loginCard}> 
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.inputlog}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.inputlog}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity
-        style={styles.checkboxContainer}
-        onPress={() => setRememberMe((prev) => !prev)}
-        activeOpacity={0.7}
-      >
-<View style={styles.checkboxRow}>
-  <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-    {rememberMe && <View style={styles.checkmark} />}
-  </View>
+    <View style={containerStyle}>
+      <Image source={require("../../assets/logo1.png")} style={logoStyle} />
+      <View style={loginCard}>
+        <Text style={styles.title}>Login</Text>
+        <TextInput
+          style={styles.inputlog}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.inputlog}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity
+          style={styles.checkboxContainer}
+          onPress={() => setRememberMe((prev) => !prev)}
+          activeOpacity={0.7}
+        >
+          <View style={styles.checkboxRow}>
+            <View
+              style={[styles.checkbox, rememberMe && styles.checkboxChecked]}
+            >
+              {rememberMe && <View style={styles.checkmark} />}
+            </View>
 
-  <Text style={styles.checkboxLabel}>Remember Me</Text>
-</View>
+            <Text style={styles.checkboxLabel}>Remember Me</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.loginButtonWrapper}>
+          <Button title="Login" onPress={handleLogin} />
+        </View>
+        {/* 2. Display the error message if it exists */}
+        {errorMessage ? (
+          <Text style={styles.errorMessage}>{errorMessage}</Text>
+        ) : null}
 
-      </TouchableOpacity>
-<View style={styles.loginButtonWrapper}>
-      <Button title="Login" onPress={handleLogin} />
-</View>
-      {/* 2. Display the error message if it exists */}
-      {errorMessage ? (
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
-      ) : null}
-
-
-     <TouchableOpacity
-  onPress={() => navigation.navigate("Register")}
-  style={{ marginTop: 16 }}
->
-  <Text style={styles.registerLink}>
-    Don't have an account? Register
-  </Text>
-</TouchableOpacity>
-
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Register")}
+          style={{ marginTop: 16 }}
+        >
+          <Text style={styles.registerLink}>
+            Don't have an account? Register
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

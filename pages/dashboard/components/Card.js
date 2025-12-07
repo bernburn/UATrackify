@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Pressable, TouchableOpacity, Platform } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { Linking } from "react-native";
 
 import { useState } from "react";
@@ -35,6 +42,12 @@ export default function Card({
 
   // If you want to show the name without extension, uncomment below:
   let documentNameOnly = documentName.split(".").shift();
+
+  const statusColor = [
+    statusOverall == "Pending"
+      ? { color: "#9c7815ff" }
+      : { color: "#158d11ff" },
+  ];
 
   const handleDownload = async (documentName) => {
     try {
@@ -100,7 +113,7 @@ export default function Card({
               ) : null}
             </View>
             <Text style={styles.cardBodyText}>
-              Overall Status: {statusOverall}
+              Overall Status: <Text style={statusColor}>{statusOverall}</Text>
             </Text>
             <TouchableOpacity
               style={styles.editButton}
@@ -120,7 +133,7 @@ export default function Card({
         ) : (
           <View style={styles.cardBody}>
             <Text style={styles.cardBodyText}>
-              Overall Status: {statusOverall}
+              Overall Status: <Text style={statusColor}>{statusOverall}</Text>
             </Text>
           </View>
         )}
@@ -139,16 +152,16 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: GLASS_THEME.glassSurface,
     padding: 20,
-    width: Platform.OS === 'web' ? '90%' : 350,
-    maxWidth: Platform.OS === 'web' ? 600 : 350,
-    minWidth: Platform.OS === 'web' ? 400 : 350,
+    width: Platform.OS === "web" ? "90%" : 350,
+    maxWidth: Platform.OS === "web" ? 450 : 350,
+    minWidth: Platform.OS === "web" ? 200 : 350,
     borderRadius: 20,
     marginBottom: 32,
     marginLeft: "auto",
     marginRight: "auto",
     borderWidth: 2,
     borderColor: GLASS_THEME.glassBorder,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(10px)" }),
     shadowColor: GLASS_THEME.darkBlue,
     shadowOffset: {
       width: 0,
@@ -165,12 +178,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardTitle: {
-    fontSize: Platform.OS === 'web' ? 20 : 18,
+    fontSize: Platform.OS === "web" ? 20 : 18,
     fontWeight: "bold",
     color: GLASS_THEME.glassText,
   },
   cardOrg: {
-    fontSize: Platform.OS === 'web' ? 16 : 14,
+    fontSize: Platform.OS === "web" ? 16 : 14,
     color: GLASS_THEME.secondaryText,
     fontStyle: "italic",
     fontWeight: "600",
@@ -182,7 +195,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardBodyText: {
-    fontSize: Platform.OS === 'web' ? 17 : 16,
+    fontSize: Platform.OS === "web" ? 17 : 16,
     color: GLASS_THEME.glassText,
     marginBottom: 8,
   },
@@ -195,7 +208,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   cardFooterText: {
-    fontSize: Platform.OS === 'web' ? 13 : 12,
+    fontSize: Platform.OS === "web" ? 13 : 12,
     fontStyle: "italic",
     color: GLASS_THEME.tertiaryText,
   },
@@ -219,20 +232,20 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   attachRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   attachLabel: {
-    fontSize: Platform.OS === 'web' ? 17 : 16,
+    fontSize: Platform.OS === "web" ? 17 : 16,
     color: GLASS_THEME.glassText,
     marginRight: 6,
-    fontWeight: '400',
+    fontWeight: "400",
   },
   attachLink: {
     color: GLASS_THEME.lightBlue,
-    textDecorationLine: 'underline',
-    fontWeight: '400',
-    fontSize: Platform.OS === 'web' ? 17 : 16,
+    textDecorationLine: "underline",
+    fontWeight: "400",
+    fontSize: Platform.OS === "web" ? 17 : 16,
   },
 });

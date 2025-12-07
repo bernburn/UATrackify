@@ -90,7 +90,7 @@ export default function NavBar({ navigation }) {
       <View style={stylesNav.navBar}>
         {/* Logo Section */}
         <Image
-          source={require("../../assets/logo.png")}
+          source={require("../../assets/logo1.png")}
           style={stylesNav.logo}
         />
 
@@ -118,7 +118,7 @@ const stylesNav = StyleSheet.create({
   // Existing Styles
   navBar: {
     height: 80,
-    paddingHorizontal: 24,
+    paddingHorizontal: 10,
     backgroundColor: colors.surface,
     shadowColor: "#000",
     shadowOffset: {
@@ -134,8 +134,8 @@ const stylesNav = StyleSheet.create({
     zIndex: 10,
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: "100%",
     resizeMode: "contain",
     marginRight: 0,
   },

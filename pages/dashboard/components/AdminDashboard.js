@@ -227,6 +227,16 @@ export default function AdminDashboardPage({ navigation }) {
 
   return (
     <View style={{ padding: 12 }}>
+      {/* Search Bar */}
+      <View style={{ marginBottom: 12 }}>
+        <TextInput
+          placeholder="Search by name, organization, or id"
+          value={filterText}
+          onChangeText={setFilterText}
+          style={styles.searchInput}
+          placeholderTextColor={"rgba(128, 128, 128, 0.8)"}
+        />
+      </View>
       {/* Single Row: Date Added filter, Organization, and Sort dropdown */}
       <View style={styles.singleFilterRow}>
         <View style={styles.dateFilterWrapper}>
@@ -296,10 +306,6 @@ export default function AdminDashboardPage({ navigation }) {
           <Picker.Item label="Name" value="name" />
           <Picker.Item label="ID" value="id" />
         </Picker>
-      </View>
-
-      {/* Order Button Row */}
-      <View style={styles.orderButtonRow}>
         <TouchableOpacity
           style={styles.orderButton}
           onPress={() => setSortOrder((s) => (s === "asc" ? "desc" : "asc"))}
@@ -309,6 +315,8 @@ export default function AdminDashboardPage({ navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Order Button Row */}
 
       {visibleData.map((item) => {
         // console.log(item.id);
@@ -384,7 +392,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: GLASS_THEME.glassBorder,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(10px)" }),
     shadowColor: GLASS_THEME.darkBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -403,7 +411,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: GLASS_THEME.glassBorder,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(10px)" }),
     shadowColor: GLASS_THEME.darkBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -437,7 +445,7 @@ const styles = StyleSheet.create({
     height: 50,
     color: GLASS_THEME.glassText,
     paddingHorizontal: 12,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(5px)" }),
   },
   orgPicker: {
     flex: 1,
@@ -449,7 +457,7 @@ const styles = StyleSheet.create({
     height: 50,
     color: GLASS_THEME.glassText,
     paddingHorizontal: 12,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(5px)" }),
   },
   dateAddedFilterRow: {
     flexDirection: "row",
@@ -461,7 +469,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: GLASS_THEME.glassBorder,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(10px)" }),
     shadowColor: GLASS_THEME.darkBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -477,7 +485,7 @@ const styles = StyleSheet.create({
     height: 50,
     color: GLASS_THEME.glassText,
     paddingHorizontal: 12,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(5px)" }),
   },
   dateInputSmall: {
     padding: 12,
@@ -490,7 +498,7 @@ const styles = StyleSheet.create({
     color: GLASS_THEME.glassText,
     flex: 1,
     height: 50,
-    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
+    ...(Platform.OS === "web" && { backdropFilter: "blur(5px)" }),
   },
   orderButton: {
     paddingVertical: 12,
@@ -514,4 +522,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
