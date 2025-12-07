@@ -108,10 +108,10 @@ export default function AddForm({ navigation }) {
 
   const handleSubmit = async () => {
     setErrorMessage("");
-    if (role === "student"){
+    if (role === "student") {
       formData.organization = org;
     }
-  
+
     if (!formData.attach_document) {
       setErrorMessage("Please Fill");
       return;
@@ -160,222 +160,229 @@ export default function AddForm({ navigation }) {
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-      <View>
-  <Text style={styles.headingOne}>Submit A Form</Text>
-</View>
+        <View>
+          <Text style={styles.headingOne}>Submit A Form</Text>
+        </View>
 
+        {/* Organization selection for admin */}
+        {role === "admin" ? (
+          <>
+            <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+              Select Organization:
+            </Text>
+            <select
+              style={styles.webSelect}
+              value={formData.organization}
+              onChange={(e) => handleChange("organization", e.target.value)}
+            >
+              <option value="">Select Organization</option>
+              {ORGANIZATION_CHOICES.map((orgName) => (
+                <option key={orgName} value={orgName}>
+                  {orgName}
+                </option>
+              ))}
+            </select>
+          </>
+        ) : (
+          <TextInput
+            style={styles.input}
+            placeholder="Organization:"
+            value={org}
+            editable={false}
+          />
+        )}
 
-      {/* Organization selection for admin */}
-      {role === "admin" ? (
-        <>
-          <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
-            Select Organization:
-          </Text>
-          <select
-            style={styles.webSelect}
-            value={formData.organization}
-            onChange={(e) => handleChange("organization", e.target.value)}
-          >
-            <option value="">Select Organization</option>
-            {ORGANIZATION_CHOICES.map((orgName) => (
-              <option key={orgName} value={orgName}>
-                {orgName}
-              </option>
-            ))}
-          </select>
-        </>
-      ) : (
+        {/* Standard Text Inputs */}
         <TextInput
           style={styles.input}
-          placeholder="Organization:"
-          value={org}
-          editable={false}
+          placeholder="Event Name:"
+          value={formData.event_name}
+          onChangeText={(text) => handleChange("event_name", text)}
         />
-      )}
+        <TextInput
+          style={styles.input}
+          placeholder="Contact Person:"
+          value={formData.contact_person}
+          onChangeText={(text) => handleChange("contact_person", text)}
+        />
 
-      {/* Standard Text Inputs */}
-      <TextInput
-        style={styles.input}
-        placeholder="Event Name:"
-        value={formData.event_name}
-        onChangeText={(text) => handleChange("event_name", text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contact Person:"
-        value={formData.contact_person}
-        onChangeText={(text) => handleChange("contact_person", text)}
-      />
-
-      {/* Event Date Picker/Input */}
-      <View style={styles.datePickerContainer}>
-        <Text style={styles.datePickerLabel}>Event Date (YYYY-MM-DD):</Text>
-        {Platform.OS === "web" ? (
-          <input
-            type="date"
-            value={formData.event_date}
-            onChange={(e) => handleChange("event_date", e.target.value)}
-            style={styles.webDateInput}
-          />
-        ) : (
-          <TextInput
-            style={styles.input}
-            placeholder="e.g., 2024-12-31 (Mobile: use native picker)"
-            value={formData.event_date}
-            onChangeText={(text) => handleChange("event_date", text)}
-          />
-        )}
-      </View>
-
-      {/* File Picker Section */}
-      <View style={styles.filePickerSection}>
-        {Platform.OS === "web" ? (
-          <View style={styles.webFileInputContainer}>
-           <Text style={styles.statusLabel}>Attach Document:</Text>
+        {/* Event Date Picker/Input */}
+        <View style={styles.datePickerContainer}>
+          <Text style={styles.datePickerLabel}>Event Date (YYYY-MM-DD):</Text>
+          {Platform.OS === "web" ? (
             <input
-              type="file"
-              onChange={handleWebFileChange}
-              style={{ display: "block", padding: "10px 0" }}
+              type="date"
+              value={formData.event_date}
+              onChange={(e) => handleChange("event_date", e.target.value)}
+              style={styles.webDateInput}
             />
-          </View>
-        ) : (
-          // Placeholder for native file selection (needs react-native-document-picker)
-          <View>
-            <Button
-              title="Select Document (Mobile)"
-              onPress={() => alert("Use DocumentPicker for Mobile")}
+          ) : (
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., 2024-12-31 (Mobile: use native picker)"
+              value={formData.event_date}
+              onChangeText={(text) => handleChange("event_date", text)}
             />
-          </View>
-        )}
+          )}
+        </View>
 
-        {fileName ? (
-          <Text style={styles.fileNameText}>File selected: **{fileName}**</Text>
-        ) : (
-          <Text style={styles.fileNameText}>No file selected.</Text>
-        )}
-      </View>
+        {/* File Picker Section */}
+        <View style={styles.filePickerSection}>
+          {Platform.OS === "web" ? (
+            <View style={styles.webFileInputContainer}>
+              <Text style={styles.statusLabel}>Attach Document:</Text>
+              <input
+                type="file"
+                onChange={handleWebFileChange}
+                style={{ display: "block", padding: "10px 0" }}
+              />
+            </View>
+          ) : (
+            // Placeholder for native file selection (needs react-native-document-picker)
+            <View>
+              <Button
+                title="Select Document (Mobile)"
+                onPress={() => alert("Use DocumentPicker for Mobile")}
+              />
+            </View>
+          )}
 
-      {/* Conditional fields for admin and office */}
-      {role === "admin" && office === "OSA" && (
-        <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status OSA:</Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_osa}
-            onChange={(e) => handleChange("status_osa", e.target.value)}
-          >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
-          <TextInput
-            style={styles.input}
-            placeholder="OSA Note"
-            value={formData.osa_note}
-            onChangeText={(text) => handleChange("osa_note", text)}
-          />
-        </>
-      )}
-      {role === "admin" && office === "VPAA" && (
-        <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
-            Status VPAA:
-          </Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_vpaa}
-            onChange={(e) => handleChange("status_vpaa", e.target.value)}
-          >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
-          <TextInput
-            style={styles.input}
-            placeholder="VPAA Note"
-            value={formData.vpaa_note}
-            onChangeText={(text) => handleChange("vpaa_note", text)}
-          />
-        </>
-      )}
-      {role === "admin" && office === "FINANCE" && (
-        <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
-            Status FINANCE:
-          </Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_finance}
-            onChange={(e) => handleChange("status_finance", e.target.value)}
-          >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
-          <TextInput
-            style={styles.input}
-            placeholder="Finance Note"
-            value={formData.finance_note}
-            onChangeText={(text) => handleChange("finance_note", text)}
-          />
-        </>
-      )}
-      {role === "admin" && office === "VPA" && (
-        <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status VPA:</Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_vpa}
-            onChange={(e) => handleChange("status_vpa", e.target.value)}
-          >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
-          <TextInput
-            style={styles.input}
-            placeholder="VPA Note"
-            value={formData.vpa_note}
-            onChangeText={(text) => handleChange("vpa_note", text)}
-          />
+          {fileName ? (
+            <Text style={styles.fileNameText}>
+              File selected: **{fileName}**
+            </Text>
+          ) : (
+            <Text style={styles.fileNameText}>No file selected.</Text>
+          )}
+        </View>
+
+        {/* Conditional fields for admin and office */}
+        {role === "admin" && office === "OSA" && (
+          <>
+            <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+              Status OSA:
+            </Text>
+            <select
+              style={styles.webSelect}
+              value={formData.status_osa}
+              onChange={(e) => handleChange("status_osa", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+            <TextInput
+              style={styles.input}
+              placeholder="OSA Note"
+              value={formData.osa_note}
+              onChangeText={(text) => handleChange("osa_note", text)}
+            />
+          </>
+        )}
+        {role === "admin" && office === "VPAA" && (
+          <>
+            <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+              Status VPAA:
+            </Text>
+            <select
+              style={styles.webSelect}
+              value={formData.status_vpaa}
+              onChange={(e) => handleChange("status_vpaa", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+            <TextInput
+              style={styles.input}
+              placeholder="VPAA Note"
+              value={formData.vpaa_note}
+              onChangeText={(text) => handleChange("vpaa_note", text)}
+            />
+          </>
+        )}
+        {role === "admin" && office === "FINANCE" && (
+          <>
+            <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+              Status FINANCE:
+            </Text>
+            <select
+              style={styles.webSelect}
+              value={formData.status_finance}
+              onChange={(e) => handleChange("status_finance", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+            <TextInput
+              style={styles.input}
+              placeholder="Finance Note"
+              value={formData.finance_note}
+              onChangeText={(text) => handleChange("finance_note", text)}
+            />
+          </>
+        )}
+        {role === "admin" && office === "VPA" && (
+          <>
+            <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+              Status VPA:
+            </Text>
+            <select
+              style={styles.webSelect}
+              value={formData.status_vpa}
+              onChange={(e) => handleChange("status_vpa", e.target.value)}
+            >
+              <option value="NS">Not Started</option>
+              <option value="IP">In Progress</option>
+              <option value="C">Completed</option>
+            </select>
+            <TextInput
+              style={styles.input}
+              placeholder="VPA Note"
+              value={formData.vpa_note}
+              onChangeText={(text) => handleChange("vpa_note", text)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Remarks (Optional)"
+              value={formData.remarks}
+              onChangeText={(text) => handleChange("remarks", text)}
+            />
+          </>
+        )}
+        {/* For non-admins or other offices, show Remarks only */}
+        {!(role === "admin" && office === "VPA") && (
           <TextInput
             style={styles.input}
             placeholder="Remarks (Optional)"
             value={formData.remarks}
             onChangeText={(text) => handleChange("remarks", text)}
           />
-        </>
-      )}
-      {/* For non-admins or other offices, show Remarks only */}
-      {!(role === "admin" && office === "VPA") && (
-        <TextInput
-          style={styles.input}
-          placeholder="Remarks (Optional)"
-          value={formData.remarks}
-          onChangeText={(text) => handleChange("remarks", text)}
-        />
-      )}
+        )}
 
-      {/* Error Message Display */}
-      {errorMessage ? (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      ) : null}
+        {/* Error Message Display */}
+        {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
 
-      {/* Submit Button Section */}
-      <View style={styles.submitButtonContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.primaryButton]}
-          onPress={handleSubmit}
-        >
-          <Text style={[styles.buttonText, { color: GLASS_THEME.white }]}>Submit Form</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.yellowButton]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.buttonText}>Go Back</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Submit Button Section */}
+        <View style={styles.submitButtonContainer}>
+          <TouchableOpacity
+            style={[styles.button, styles.primaryButton]}
+            onPress={handleSubmit}
+          >
+            <Text style={[styles.buttonText, { color: GLASS_THEME.white }]}>
+              Submit Form
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.yellowButton]}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.buttonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -584,11 +591,10 @@ const styles = StyleSheet.create({
   },
 
   headingOne: {
-  fontSize: 32,
-  fontWeight: "900",
-  color: GLASS_THEME.glassText,
-  marginBottom: 20,
-  textAlign: "center",
+    fontSize: 32,
+    fontWeight: "900",
+    color: GLASS_THEME.glassText,
+    marginBottom: 20,
+    textAlign: "center",
   },
-
 });
