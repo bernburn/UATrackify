@@ -1,5 +1,3 @@
-import { text } from "stream/consumers";
-
 export const colors = {
   primary: "#284B63",
   secondary: "#3c6e71",
